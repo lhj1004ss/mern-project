@@ -3,9 +3,12 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
-const app = express()
+const cors = require('cors');
+const { auth } = require('./middleware/auth')
+const { User } = require('./models/user');
 
-const {User} = require('./models/user');
+
+const app = express()
 
 dotenv.config();
 
@@ -15,6 +18,10 @@ const MONGO_URI = process.env.MONGO_URI;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000'
+}));
 
 mongoose.connect(MONGO_URI,{
     useNewUrlParser: true,
@@ -23,12 +30,17 @@ mongoose.connect(MONGO_URI,{
     useUnifiedTopology: true,
 }).then(() => {console.log("MongoDB is successfully connected")}).catch(err =>{ console.log(`Something occurred ${err}`)})
 
-app.get('/', function (req, res) {
-  res.send('Hello World')
+// app.get('/', function (req, res) {
+//   res.send('Hello World')
+// })
+
+// @@ get test for front
+app.get('/api/test', (req,res) => {
+  res.send("test for frontend");
 })
 
 // @@ post register
-app.post('/register',(req,res) => {
+app.post('/api/users/register',(req,res) => {
   const user = new User(req.body);
   user.save((err, userInfo)=>{
     if(err) {
@@ -40,7 +52,7 @@ app.post('/register',(req,res) => {
 });
 
 // @@ post login
-app.post('/login',(req,res) => {
+app.post('/api/users/login',(req,res) => {
   User.findOne({ email:req.body.email}, (err,user) => {
     // if no vaild user
     if(!user){
@@ -68,6 +80,27 @@ app.post('/login',(req,res) => {
 
     })
   })
+})
+
+// @@ get auth
+app.get('/api/users/auth', auth,(req, res) => {
+  res.status(200).json({
+    _id: req.user._id,
+    isAuth: true,
+    email: req.user.email,
+    firstname: req.user.firstname,
+    lastname: req.user.lastname
+  })
+})
+
+// @@ get logout
+app.get('/api/users/logout', auth,(req, res) => {
+  User.findOneAndUpdate({_id:req.user._id},
+    {token: ""},
+    (err, user) => {
+      if(err) return res.json({ success: false, err});
+      return res.status(200).send({success: true})
+    })
 })
 
 app.listen(PORT,()=>{console.log(`Serever is successfully connected on ${PORT}`)});

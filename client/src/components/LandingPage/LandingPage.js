@@ -1,17 +1,26 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import './LandingPage.css';
 import axios from 'axios';
 
-function LandingPage() {
-  const URL = "http://localhost:5000/api/test";
+function LandingPage(props) {
 
-  useEffect(() => {
-    
-  axios.get(URL).then(response => console.log(response));
+  const URL ='http://localhost:5000/api/users/logout'
 
-  }, [])
+    const onClickHandler = () => {
+    axios.get(URL,"",{ withCredentials: true }).then((res) => {
+    console.log(res.data);
+      // if (res.data.success) {
+      //   props.history.push("/login");
+      // } else {
+      //   alert("failed to login");
+      // }
+    });
+  };
+
   return (
-    <div>
-      landingpage
+    <div className="landing-container">
+      startPage
+      <button onClick={onClickHandler}>Logout</button>
     </div>
   )
 }

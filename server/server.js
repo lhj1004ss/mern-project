@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors({
   credentials: true,
-  origin: 'http://localhost:3000'
+  origin: 'http://localhost:3000',
 }));
 
 mongoose.connect(MONGO_URI,{
@@ -95,7 +95,8 @@ app.get('/api/users/auth', auth,(req, res) => {
 
 // @@ get logout
 app.get('/api/users/logout', auth,(req, res) => {
-  User.findOneAndUpdate({_id:req.user._id},
+  console.log('req.user', req.user);
+  User.findOneAndUpdate({_id: req.user._id},
     {token: ""},
     (err, user) => {
       if(err) return res.json({ success: false, err});

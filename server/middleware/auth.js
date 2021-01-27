@@ -1,17 +1,23 @@
-const {User} = require('../models/user');
+const express = requre('express');
+const { User } = require('../models/user');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
 
-let auth = (req, res, next) => {
-  // bring cookie from client
-  let token = req.cookies.x_auth;  
-// find an user
-  User.findByToken(token, (err, user) => {
-    if(err) throw err;
-    if(!user) return res.json({isAuth: false, error: true});
-    
-    req.token = token;
-    req.user = user;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+const auth = (req, res, next) => {
+  const token = req.header('x-auth-token');
+  if(!token){
+    return res.status(401).json({message:"No Token Available"});
+  }
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
     next();
-  })
+  } catch (error) {
+    next(error)
+  }
 }
 
 module.exports = { auth };

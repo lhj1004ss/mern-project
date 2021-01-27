@@ -4,16 +4,16 @@ import axios from 'axios';
 
 function LandingPage(props) {
 
-  const URL ='http://localhost:5000/api/users/logout'
+  const URL ='/api/users/logout'
 
     const onClickHandler = () => {
-    axios.get(URL,"",{ withCredentials: true }).then((res) => {
+    axios.get(URL).then((res) => {
     console.log(res.data);
-      // if (res.data.success) {
-      //   props.history.push("/login");
-      // } else {
-      //   alert("failed to login");
-      // }
+      if (res.data.success) {
+        props.history.push("/login");
+      } else {
+        alert("failed to login");
+      }
     });
   };
 

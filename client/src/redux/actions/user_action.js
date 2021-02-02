@@ -11,7 +11,7 @@ export function loginUser(data) {
 }
 
 export function registerUser(data) {
-  const request = axios.post('http://localhost:5000/api/users/register', data).then(res => res.data)
+  const request = axios.post('http://localhost:5000/api/users/create', data).then(res => res.data)
   
   return {
     type: REGISTER_USER,

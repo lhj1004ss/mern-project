@@ -1,12 +1,10 @@
 const express = require('express')
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const cors = require('cors');
+const cookieParser = require('cookie-parser');
+// const cors = require('cors');
 const morgan = require('morgan');
 const userRoutes = require('./routes/user');
-
-
-
 const app = express()
 
 dotenv.config();
@@ -15,10 +13,11 @@ const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 
 app.use(express.json());
-app.use(cors({
-  origin: true,
-  credentials: true,
-}));
+app.use(cookieParser());
+// app.use(cors({
+//   origin: true,
+//   credentials: true,
+// }));
 app.use(morgan("dev"));
 
 // @@ desc mongoDB connection
@@ -27,7 +26,7 @@ mongoose.connect(MONGO_URI, {
   useCreateIndex: true,
   useFindAndModify: false,
   useUnifiedTopology: true,
-}).then(() => { console.log("MongoDB is successfully connected") }).catch(err => { console.log(`Something occurred ${err}`) })
+}).then(() => { console.log("MongoDB is successfully connected") }).catch(err => { next(err); })
 
 // @@ desc routes
 app.use('/api/users', userRoutes);

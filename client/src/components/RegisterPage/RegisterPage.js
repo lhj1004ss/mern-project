@@ -55,7 +55,7 @@ const onChangeHandler = (e) => {
 
     dispatch(registerUser(data)).then(res => {
       if(res.payload.success){
-        props.history.push('/');
+        props.history.push('/login');
       }else{
         alert("failed to sign up");
       }
